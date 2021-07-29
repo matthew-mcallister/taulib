@@ -3,6 +3,7 @@ function Invoke-WakeOnLan {
         # one or more MACAddresses
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         # mac address must be a following this regex pattern:
+        # TODO: Allow omitting - or : separator
         [ValidatePattern('^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$')]
         [string[]]
         $MacAddress 
