@@ -54,7 +54,7 @@ function Invoke-TauInstaller {
         $InstallScript
     )
     if (-not (Test-PackageInstalled $Name)) {
-        Write-Output "Starting background install of $name..."
+        Write-Output "Starting install of $name (may run in background)..."
         & $InstallScript
     }
 }
@@ -72,6 +72,21 @@ function Install-TauApp {
         'Google Drive' {
             Invoke-TauInstaller -Name $Name -InstallScript {
                 & "$InstallerDir\GoogleDriveSetup.exe" --silent --gsuite_shortcuts=false
+            }
+        }
+        'Google Chrome' {
+            Invoke-TauInstaller -Name $Name -InstallScript {
+                & 'msiexec.exe' /L*v 'C:\install.log' /qn /I "$InstallerDir\GoogleChromeStandaloneEnterprise64.msi" 
+            }
+        }
+        'vCastSender' {
+            Invoke-TauInstaller -Name $Name -InstallScript {
+                & 'msiexec.exe' /L*v 'C:\install.log' /qn /I "$InstallerDir\vCastSender\vCastSender_v3.0.2.1013.msi" 
+            }
+        }
+        'Microsoft Office Professional Plus 2019 - en-us' {
+            Invoke-TauInstaller -Name $Name -InstallScript {
+                & "$InstallerDir\Office2019\setup.exe" '/configure' "$InstallerDir\Office2019\tausd-2019-pro.xml" 
             }
         }
         default {
