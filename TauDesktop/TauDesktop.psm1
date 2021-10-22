@@ -3,7 +3,13 @@
 function Remove-StrayLocalUsers {
     $strays = Get-LocalUser | Where-Object { $_.Enabled -and -not ($_.Name -eq 'Administrator') }
     Write-Output "Removing users: $($strays | Select-Object -ExpandProperty 'Name')"
-    $strays | Remove-LocalUser
+    $cims = Get-CimInstance Win32_UserProfile
+    $strays | ForEach-Object {
+        $user = $_
+        $cim = $cims | Where-Object { $_.SID -eq $user.SID }
+        Remove-CimInstance $cim
+        Remove-LocalUser $user
+    }
 }
 
 # .SYNOPSIS
@@ -15,7 +21,7 @@ function Get-UserMachines {
 
 # .SYNOPSIS
 # Updates the list of computer objects allowed to delegate Kerberos credentials
-# to our servers.
+# to network services.
 function Update-KerberosDelegationLists {
     Set-ADComputer 'data-tausd' -PrincipalsAllowedToDelegateToAccount (Get-UserMachines)
 }
